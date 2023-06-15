@@ -4,8 +4,7 @@
         Title="Space Shooter" Height="480" Width="640"
         KeyDown="Window_KeyDown" KeyUp="Window_KeyUp">
     <Canvas x:Name="GameCanvas" Background="Black" Focusable="True">
-        <!--<Image x:Name="img_GreenBandit" Width="30" Height="21" Canvas.Left="10" Canvas.Top="10" Source="Resources/Bandit_Green.png" />-->
+        <!-- Bandits added in code -->
         <Image x:Name="img_SpaceShip" Width="40" Height="40" Canvas.Left="10" Canvas.Bottom="10" Source="Resources/SpaceShip.png" />
-        <!--<Rectangle x:Name="PlayerShip" Fill="White" Width="50" Height="30" Canvas.Left="100" Canvas.Top="400"/>-->
     </Canvas>
 </Window>

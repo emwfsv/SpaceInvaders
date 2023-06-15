@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Resources\Bandit_Green.png" />
+    <None Remove="Resources\LaserBeam.png" />
     <None Remove="Resources\SpaceShip.png" />
   </ItemGroup>
 
@@ -20,6 +21,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\Bandit_Green.png" />
+    <Content Include="Resources\LaserBeam.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
