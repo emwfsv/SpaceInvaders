@@ -12,10 +12,14 @@
     <None Remove="Resources\Bandit_Green.png" />
     <None Remove="Resources\LaserBeam.png" />
     <None Remove="Resources\SpaceShip.png" />
+    <None Remove="Resources\Welcome.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\SpaceShip.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Welcome.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

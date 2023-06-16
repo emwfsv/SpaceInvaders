@@ -1,6 +1,7 @@
 ﻿using SpaceInvaders.Classes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +32,23 @@ namespace SpaceShooter
 
         public MainWindow()
         {
+            var timer = new Stopwatch();
+            timer.Start();
+
+            var Welcome = new SpaceInvaders.Forms.WelcomeScreen();
+            Welcome.Show();
+
+            while (true)
+            {
+
+                System.Threading.Thread.Sleep(50);
+                if (timer.ElapsedMilliseconds >= 5000)
+                {
+                    Welcome.Close();
+                    break;
+                }
+            }
+
             InitializeComponent();
 
             //Create the game loop.
@@ -278,6 +296,9 @@ namespace SpaceShooter
             {
                 //Add new bandits
                 AddBandits();
+
+                //Increase speed on bandits
+                BanditSpeed += 1;
             }
         }
 
