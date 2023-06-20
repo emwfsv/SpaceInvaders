@@ -19,8 +19,8 @@ namespace SpaceShooter
         private bool isBanditMovingRight; 
         private bool isBanditMovingLeft;
         private int StarshipSpeed = 5;
-        private int BanditSpeed = 2;
-        private int LaserSpeed = 3;
+        private double BanditSpeed = 1;
+        private int LaserSpeed = 2;
         private int BanditWidth = 30;
         private int BanditHeight = 21;
         private int LaserWidth = 25;
@@ -37,41 +37,34 @@ namespace SpaceShooter
 
             var Welcome = new SpaceInvaders.Forms.WelcomeScreen();
             Welcome.Show();
-
-            while (true)
-            {
-
-                System.Threading.Thread.Sleep(50);
-                if (timer.ElapsedMilliseconds >= 5000)
-                {
-                    Welcome.Close();
-                    break;
-                }
-            }
+            Welcome.Closed += StartNewGame;
 
             InitializeComponent();
+            this.Visibility = Visibility.Hidden;
+        }
 
-            //Create the game loop.
-            CompositionTarget.Rendering += GameLoop;
+        private void StartNewGame(object sender, EventArgs e)
+        {
+            this.Visibility = Visibility.Visible;
 
             //Set application defaults.
             isBanditMovingRight = true;
 
-            //Add Bandits
-            AddBandits();
+            //Create the game loop.
+            CompositionTarget.Rendering += GameLoop;
 
-            //Create Beam list
-            CurrentLaserBeamList= new List<LaserBeam>();
+            //Create list
+            CurrentLaserBeamList = new List<LaserBeam>();
+            CurrentBanditList = new List<Bandit>();
 
             //Set score at start
             lbl_Score.Content = GameScore;
-
         }
 
         private void GameLoop(object sender, EventArgs e)
         {
             //First loop this is 0 until we have a forms open.
-            if (GameCanvas.ActualWidth == 0)
+            if (GameCanvas.ActualWidth == 0 || GameCanvas.ActualHeight == 0)
                 return;
 
             // Handle player movement
@@ -91,7 +84,10 @@ namespace SpaceShooter
                 Shoot();
 
             //Handle New Bandits?
-            StartNewGame();
+            CreateNewBandits();
+
+            //Handle Game Over
+            HandleGameOver();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -139,65 +135,69 @@ namespace SpaceShooter
 
         private void HandleBandits()
         {
-            //ToDo: To be replaced by Aggregate!!!
-            var mostLeftBandit = CurrentBanditList.OrderByDescending(x => x.CanvasLeftPos).Last();
-            var mostRightBandit = CurrentBanditList.OrderByDescending(x => x.CanvasLeftPos).Take(1).First();
+            try
+            {
+                //ToDo: To be replaced by Aggregate!!!
+                var mostLeftBandit = CurrentBanditList.OrderByDescending(x => x.CanvasLeftPos).Last();
+                var mostRightBandit = CurrentBanditList.OrderByDescending(x => x.CanvasLeftPos).Take(1).First();
 
-            //Moving bandits right
-            if (isBanditMovingRight && Canvas.GetLeft(GetCanvasChildren(mostRightBandit.BanditImage)) + mostRightBandit.BanditImage.Width <= GameCanvas.ActualWidth)
-            {
-                foreach (var bandit in CurrentBanditList)
-                {
-                    var child = GetCanvasChildren(bandit.BanditImage);
-                    Canvas.SetLeft(child, Canvas.GetLeft(child) + BanditSpeed);
-                    bandit.CanvasLeftPos = Canvas.GetLeft(child);
-                }
-                isBanditMovingLeft = false;
-                return;
-            }
-            else
-            {
-                if (isBanditMovingRight)
+                //Moving bandits right
+                if (isBanditMovingRight && Canvas.GetLeft(GetCanvasChildren(mostRightBandit.BanditImage)) + mostRightBandit.BanditImage.Width <= GameCanvas.ActualWidth)
                 {
                     foreach (var bandit in CurrentBanditList)
                     {
                         var child = GetCanvasChildren(bandit.BanditImage);
-                        Canvas.SetTop(child, Canvas.GetTop(child) + 10);
-                        bandit.CanvasTopPos = Canvas.GetTop(child);
+                        Canvas.SetLeft(child, Canvas.GetLeft(child) + BanditSpeed);
+                        bandit.CanvasLeftPos = Canvas.GetLeft(child);
                     }
+                    isBanditMovingLeft = false;
+                    return;
+                }
+                else
+                {
+                    if (isBanditMovingRight)
+                    {
+                        foreach (var bandit in CurrentBanditList)
+                        {
+                            var child = GetCanvasChildren(bandit.BanditImage);
+                            Canvas.SetBottom(child, Canvas.GetBottom(child) - 30);
+                            bandit.CanvasBottomPos = Canvas.GetBottom(child);
+                        }
+                    }
+
+                    //We reached right border. move them down
+                    isBanditMovingLeft = true;
+                    isBanditMovingRight = false;
                 }
 
-                //We reached right border. move them down
-                isBanditMovingLeft = true;
-                isBanditMovingRight = false;
-            }
-
-            //Moving bandits right
-            if (isBanditMovingLeft && Canvas.GetLeft(GetCanvasChildren(mostLeftBandit.BanditImage)) > 0)
-            {
-                foreach (var bandit in CurrentBanditList/*.Where(x => x.IsAlive)*/)
+                //Moving bandits right
+                if (isBanditMovingLeft && Canvas.GetLeft(GetCanvasChildren(mostLeftBandit.BanditImage)) > 0)
                 {
-                    var child = GetCanvasChildren(bandit.BanditImage);
-                    Canvas.SetLeft(child, Canvas.GetLeft(child) - BanditSpeed);
-                    bandit.CanvasLeftPos = Canvas.GetLeft(child);
-                }
-                isBanditMovingRight = false;
-            }
-            else
-            {
-                if (isBanditMovingLeft)
-                {
-                    foreach (var bandit in CurrentBanditList)
+                    foreach (var bandit in CurrentBanditList/*.Where(x => x.IsAlive)*/)
                     {
                         var child = GetCanvasChildren(bandit.BanditImage);
-                        Canvas.SetTop(child, Canvas.GetTop(child) + 10);
-                        bandit.CanvasTopPos = Canvas.GetTop(child);
+                        Canvas.SetLeft(child, Canvas.GetLeft(child) - BanditSpeed);
+                        bandit.CanvasLeftPos = Canvas.GetLeft(child);
                     }
+                    isBanditMovingRight = false;
                 }
+                else
+                {
+                    if (isBanditMovingLeft)
+                    {
+                        foreach (var bandit in CurrentBanditList)
+                        {
+                            var child = GetCanvasChildren(bandit.BanditImage);
+                            Canvas.SetBottom(child, Canvas.GetBottom(child) - 30);
+                            bandit.CanvasBottomPos = Canvas.GetBottom(child);
+                        }
+                    }
 
-                isBanditMovingLeft = false;
-                isBanditMovingRight = true;
+                    isBanditMovingLeft = false;
+                    isBanditMovingRight = true;
+                }
             }
+            catch { }
         }
 
         private void HandleLaserBeams()
@@ -209,34 +209,43 @@ namespace SpaceShooter
                 beam.CanvasBottomPos = Canvas.GetBottom(GetCanvasChildren(beam.LaserImage));
             }
 
-            //Remove any dead ones from list....
-            var beamsToRemove = CurrentLaserBeamList.Where(x => x.CanvasBottomPos >= 2000).ToList();
-
-            foreach (var beam in beamsToRemove)
+            if (CurrentLaserBeamList.Count > 0)
             {
-                GameCanvas.Children.Remove(GetCanvasChildren(beam.LaserImage));
-                CurrentLaserBeamList.Remove(beam);
+                //Remove any dead ones from list....
+                var beamsToRemove = CurrentLaserBeamList.Where(x => x.CanvasBottomPos >= 1500).ToList();
+
+                foreach (var beam in beamsToRemove)
+                {
+                    GameCanvas.Children.Remove(GetCanvasChildren(beam.LaserImage));
+                    CurrentLaserBeamList.Remove(beam);
+                }
             }
-            //CurrentLaserBeamList = CurrentLaserBeamList.Where(x => x.CanvasBottomPos < 2000).ToList();
         }
 
         private void HandleHits()
         {
-
-            foreach(var beam in CurrentLaserBeamList)
+            var beamsThatHit = new List<LaserBeam>();
+            foreach (var beam in CurrentLaserBeamList)
             {
                 //Logic for checking each bandit towards the beam..
                 var beamMidPos = beam.CanvasLeftPos + LaserWidth / 2;
-                var beamTopPos = beam.CanvasBottomPos + LaserHeight - GameCanvas.ActualHeight;
+                var beamTopPos = beam.CanvasBottomPos + LaserHeight;
 
                 //Get any bandit thats been hit
-                var bandit = CurrentBanditList.Where(x => x.CanvasLeftPos <= beamMidPos && x.CanvasLeftPos + BanditWidth >= beamMidPos && x.CanvasTopPos - BanditHeight <= beamTopPos && x.CanvasTopPos >= beamTopPos).FirstOrDefault();
+                var bandit = CurrentBanditList.Where(x => x.CanvasLeftPos <= beamMidPos
+                                                     && x.CanvasLeftPos + BanditWidth >= beamMidPos
+                                                     && x.CanvasBottomPos <= beamTopPos
+                                                     && x.CanvasBottomPos + BanditHeight >= beamTopPos).FirstOrDefault();
 
                 if (bandit != null)
                 {
                     //Remove bandit
                     GameCanvas.Children.Remove(GetCanvasChildren(bandit.BanditImage));
                     CurrentBanditList.RemoveAll(x => x.Uid == bandit.Uid);
+                    GameCanvas.UpdateLayout();
+
+                    //Add beam to be removed!
+                    beamsThatHit.Add(beam);
 
                     //Update score.
                     GameScore += 1;
@@ -244,7 +253,12 @@ namespace SpaceShooter
                 }
             }
 
-
+            //Also remove beam!
+            foreach (var b in beamsThatHit)
+            { 
+                GameCanvas.Children.Remove(GetCanvasChildren(b.LaserImage));
+                CurrentLaserBeamList.Remove(b);
+            }
         }
 
         private void Shoot()
@@ -274,7 +288,7 @@ namespace SpaceShooter
             var bottomPos = 10;
 
             //Add laser to list if we do not have one in range....
-            if (!CurrentLaserBeamList.Any(x => x.CanvasLeftPos >= leftPos - 20 && x.CanvasLeftPos <= leftPos + 20 && x.CanvasBottomPos <= 100))
+            if (!CurrentLaserBeamList.Any(x => x.CanvasBottomPos <= 70))
             {
                 //Update with positions for laserbeams
                 beam.CanvasLeftPos = leftPos;
@@ -288,18 +302,25 @@ namespace SpaceShooter
                 Canvas.SetLeft(GetCanvasChildren(beam.LaserImage), leftPos);
                 Canvas.SetBottom(GetCanvasChildren(beam.LaserImage), bottomPos);
             }
-        }
 
-        private void StartNewGame()
+            //isShooting = false;
+        }
+             
+        private void CreateNewBandits()
         {
-            if (CurrentBanditList.Count() == 0)
+            if (CurrentBanditList.Count() == 0 && GameCanvas.ActualHeight != 0)
             {
                 //Add new bandits
                 AddBandits();
 
                 //Increase speed on bandits
-                BanditSpeed += 1;
+                BanditSpeed += 0.2;
             }
+        }
+
+        private void HandleGameOver()
+        {
+
         }
 
         //================================================
@@ -323,7 +344,8 @@ namespace SpaceShooter
         private void AddBandits()
         {
             var startPosition_left = 0;
-            var startPosition_top = 10;
+            //var startPosition_top = 10;
+            var startPosition_bottom = GameCanvas.ActualHeight - BanditHeight - 10;
             var numberOfBanditsInRow = 10;
             var numberOfBanditRows = 2;
 
@@ -343,7 +365,9 @@ namespace SpaceShooter
                         Name = $"Bandit_{r}_{c}",
                         Uid = uuid,
                         CanvasLeftPos = startPosition_left,
-                        CanvasTopPos = startPosition_top,
+                        //CanvasTopPos = startPosition_top,
+                        CanvasBottomPos = startPosition_bottom,
+
                         BanditImage = new Image
                         {
                             Name = "Bandit",
@@ -360,14 +384,16 @@ namespace SpaceShooter
                     GameCanvas.Children.Add(bandit.BanditImage);
 
                     Canvas.SetLeft(GetCanvasChildren(bandit.BanditImage), bandit.CanvasLeftPos);
-                    Canvas.SetTop(GetCanvasChildren(bandit.BanditImage), bandit.CanvasTopPos);
+                    //Canvas.SetTop(GetCanvasChildren(bandit.BanditImage), bandit.CanvasTopPos);
+                    Canvas.SetBottom(GetCanvasChildren(bandit.BanditImage), bandit.CanvasBottomPos);
 
                     //Create next
                     startPosition_left += 50;
                 }
                 //Create next
                 startPosition_left = 25;
-                startPosition_top += 30;
+                //startPosition_top += 30;
+                startPosition_bottom -= 30;
             }
         }
     }

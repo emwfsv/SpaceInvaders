@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\DangerOnTheMotorway-xV10.ttf" />
     <None Remove="Resources\Bandit_Green.png" />
     <None Remove="Resources\LaserBeam.png" />
     <None Remove="Resources\SpaceShip.png" />
@@ -16,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\DangerOnTheMotorway-xV10.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Resources\SpaceShip.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

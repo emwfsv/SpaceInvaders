@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:SpaceShooter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="Scoreboard">pack://application:,,,/Fonts/#Danger On The Motorway</FontFamily>
     </Application.Resources>
 </Application>

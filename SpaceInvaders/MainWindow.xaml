@@ -6,8 +6,8 @@
     <Canvas x:Name="GameCanvas" Background="Black" Focusable="True">
         <!-- Bandits added in code -->
         <StackPanel Orientation="Horizontal">
-            <Label x:Name="lbl_ScoreText" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,0,10" Content="Score :" Foreground="Gray" FontSize="18"/>
-            <Label x:Name="lbl_Score" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,11,10,0" Content="0" Foreground="Gray" FontSize="18"/>            
+            <Label x:Name="lbl_ScoreText" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,0,10" Content="SCORE :" Foreground="LightGray" FontFamily="{StaticResource Scoreboard}" FontSize="35" FontStyle="Normal" FontWeight="Normal"/>
+            <Label x:Name="lbl_Score" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,11,10,0" Content="0" Foreground="LightGray" FontFamily="{StaticResource Scoreboard}" FontSize="35" FontStyle="Normal" FontWeight="Normal"/>            
         </StackPanel>
         <Image x:Name="img_SpaceShip" Width="40" Height="40" Canvas.Left="10" Canvas.Bottom="10" Source="Resources/SpaceShip.png" Uid="Spacecraft"/>
     </Canvas>

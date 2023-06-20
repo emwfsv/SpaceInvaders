@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpaceInvaders.Forms"
         mc:Ignorable="d"
-        Title="WelcomeScreen" Height="450" Width="800" WindowStyle="None" WindowStartupLocation ="CenterScreen">
+        Title="WelcomeScreen" Height="450" Width="800" WindowStyle="None" WindowStartupLocation ="CenterScreen" KeyDown="Window_KeyDown">
     <Grid>
         <Image Source="/Resources/Welcome.png" Stretch="Fill" Visibility="Visible" />
+        <TextBlock HorizontalAlignment="Center" Margin="0,392,0,0" TextWrapping="Wrap" Text="Press 'Space' to enter into space" Foreground="YellowGreen" VerticalAlignment="Top" FontFamily="Britannic Bold" FontSize="30"/>
 
     </Grid>
 </Window>

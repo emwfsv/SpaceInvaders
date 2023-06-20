@@ -21,7 +21,8 @@ namespace SpaceInvaders.Classes
         //internal int CanvasId { get; set; }
         internal Guid Uid { get; set; }
         internal double CanvasLeftPos { get; set; }
-        internal double CanvasTopPos { get; set; }
+        //internal double CanvasTopPos { get; set; }
+        internal double CanvasBottomPos { get; set; }
         internal string Name { get; set; }
         internal Image BanditImage { get; set; }
     }

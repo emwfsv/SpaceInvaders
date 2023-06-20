@@ -23,5 +23,11 @@ namespace SpaceInvaders.Forms
         {
             InitializeComponent();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+                this.Close();
+        }
     }
 }
