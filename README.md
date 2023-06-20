@@ -6,7 +6,6 @@ Use arrow keys to move spaceship left / right and spacebar to fire a blazing las
 ToDo:
 - Add bandits that could fire back.
 - Add functions when "earth" is invaded and sets Game Over
-- Add welcome screen
 - Add a star background
 - Add sound
 - Add explosion Icon
